@@ -65,4 +65,8 @@ func GetPost(ctx controller.Context) {
 }
 func Post(ctx controller.Context) {
 	fmt.Println("in Post")
+
+	// fmt.Println(ctx.Form["username"][0])
+
+	ctx.Render("post", data{ctx.Form["username"][0], 12, "mamada"})
 }
