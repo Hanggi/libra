@@ -78,6 +78,8 @@ type Context struct {
 	IPp        string
 	Form       url.Values
 	Validate   formUtil
+	Query      url.Values
+	GetParam   func(string) string
 }
 
 // Render in context
@@ -125,6 +127,8 @@ func setContext(ctx *Context, w http.ResponseWriter, r *http.Request, ps httprou
 	ctx.Method = r.Method
 	ctx.URL = r.URL
 	ctx.IPp = r.RemoteAddr
+	ctx.Query = r.URL.Query()
+	ctx.GetParam = ps.ByName
 }
 
 // GET vv
@@ -140,6 +144,10 @@ func (r *LRouter) GET(path string, controller func(ctx_para Context)) {
 		})
 
 		setContext(&ctx, w, r, ps)
+		fmt.Printf("%+v \n", r)
+		fmt.Println(ctx.Query)
+		fmt.Println(ps)
+		fmt.Println(ctx.GetParam("id"))
 
 		controller(ctx)
 	})
@@ -185,7 +193,7 @@ func (r *LRouter) PUT(path string, controller func(ctx_para Context)) {
 	})
 }
 
-// PUT vv
+// DELETE vv
 func (r *LRouter) DELETE(path string, controller func(ctx_para Context)) {
 	var ctx Context
 

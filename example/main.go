@@ -28,6 +28,8 @@ func main() {
 
 	router.GET("/", route.Index)
 	router.GET("/test", route.Test)
+	router.GET("/test/:id", route.Test)
+	router.GET("/test/:id/*action", route.Test)
 	router.GET("/post", func(ctx libra.Context) {
 		fmt.Println("in get post")
 
