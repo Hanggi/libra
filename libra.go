@@ -6,16 +6,20 @@ import (
 	"strconv"
 
 	// "./context"
-	"github.com/Hanggi/libra/controller"
+	// "github.com/Hanggi/libra/controller"
+
 	"github.com/julienschmidt/httprouter"
 )
 
 // App struct
 type App struct {
-	Port       int
-	Router     *httprouter.Router
-	Views      string
-	Controller controller.Controller
+	Port    int
+	Router  *httprouter.Router
+	LRouter LRouter
+	Views   string
+	// Controller Controller
+	Context Context
+	Log     Log
 	// context    controller.LibraContext
 }
 
@@ -28,12 +32,12 @@ var (
 func init() {
 	Libra.Router = httprouter.New()
 	Libra.Views = "views"
-	controller.LibraContext.ViewPath = Libra.Views
+	Libra.Context.ViewPath = Libra.Views
 }
 
-type Person struct {
-	UserName string
-}
+// type Person struct {
+// 	UserName string
+// }
 
 // Static routing
 func (app *App) Static(url string, path string) *App {

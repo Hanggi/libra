@@ -1,4 +1,4 @@
-package controller
+package libra
 
 import (
 	"fmt"
@@ -10,15 +10,11 @@ import (
 	"time"
 
 	// "../../libra"
+
 	"github.com/Hanggi/libra/util"
 	"github.com/julienschmidt/httprouter"
 	log "github.com/sirupsen/logrus"
 )
-
-// Context ..
-/*Context struct
- *	http context
- */
 
 type formUtil struct {
 }
@@ -84,20 +80,16 @@ type Context struct {
 	Validate   formUtil
 }
 
-// var
-var (
-	LibraContext Context
-)
-
 // Render in context
 func (ctx *Context) Render(view string, data interface{}) {
 	fmt.Println("in Render")
 
-	// fmt.Println(LibraContext.ViewPath)
-	t, err := template.ParseFiles(LibraContext.ViewPath + "/" + view + ".html")
-	// t, err := template.ParseFiles(view + ".html")
+	t, err := template.ParseFiles(Libra.Context.ViewPath + "/" + view + ".html")
+
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("【Error】", err)
+		ctx.w.WriteHeader(http.StatusInternalServerError) // Proper HTTP response
+		return
 	}
 	t.Execute(ctx.w, data)
 }
@@ -115,46 +107,31 @@ func (ctx *Context) GetCookie(name string) *http.Cookie {
 	cookie, err := ctx.r.Cookie(name)
 	if err != nil {
 		fmt.Println(err)
-		// return false
+		return nil
 	}
 	// fmt.Fprint(ctx.w, cookie.Name)
 	return cookie
 }
 
-/*Controller struct
- *	A wrapper of httprouter Handle
- */
-type Controller struct {
+// LRouter vv
+type LRouter struct {
 }
 
-// Route controller wrap
-func (c *Controller) Route(route func(ctx_para Context)) httprouter.Handle {
+func setContext(ctx *Context, w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	ctx.w = w
+	ctx.r = r
+	ctx.ps = ps
+
+	ctx.Method = r.Method
+	ctx.URL = r.URL
+	ctx.IPp = r.RemoteAddr
+}
+
+// GET vv
+func (r *LRouter) GET(path string, controller func(ctx_para Context)) {
 	var ctx Context
 
-	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-		ctx.w = w
-		ctx.r = r
-		ctx.ps = ps
-
-		ctx.Method = r.Method
-		ctx.URL = r.URL
-		ctx.IPp = r.RemoteAddr
-
-		fmt.Printf("%+v \n\n", r)
-		// fmt.Println(ps, "\n!!")
-
-		// fmt.Println(ctx.Validate.IsEmail("aef@f2.com"))
-		// fmt.Println(ctx.Validate.IsEmail("aef@f@2.com"))
-
-		ctx.SetCookie("thisisname", "this is value", 1)
-		fmt.Println(ctx.GetCookie("thisisname"))
-
-		if ctx.Method == "POST" {
-			r.ParseForm()
-			ctx.Form = r.Form
-			fmt.Printf("%+v", ctx.Form)
-		}
-
+	Libra.Router.GET(path, func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		defer util.CalcTimeEnd(time.Now(), func(d time.Duration) {
 			log.WithFields(log.Fields{
 				"Method": ctx.Method + " " + ctx.URL.Path,
@@ -162,7 +139,66 @@ func (c *Controller) Route(route func(ctx_para Context)) httprouter.Handle {
 			}).Info("log test")
 		})
 
-		route(ctx)
+		setContext(&ctx, w, r, ps)
 
-	}
+		controller(ctx)
+	})
+}
+
+// POST vv
+func (r *LRouter) POST(path string, controller func(ctx_para Context)) {
+	var ctx Context
+
+	Libra.Router.POST(path, func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+		defer util.CalcTimeEnd(time.Now(), func(d time.Duration) {
+			log.WithFields(log.Fields{
+				"Method": ctx.Method + " " + ctx.URL.Path,
+				"time":   d,
+			}).Info("log test")
+		})
+
+		if ctx.Method == "POST" {
+			r.ParseForm()
+			ctx.Form = r.Form
+			fmt.Printf("%+v", ctx.Form)
+		}
+
+		controller(ctx)
+	})
+}
+
+// PUT vv
+func (r *LRouter) PUT(path string, controller func(ctx_para Context)) {
+	var ctx Context
+
+	Libra.Router.GET(path, func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+		defer util.CalcTimeEnd(time.Now(), func(d time.Duration) {
+			log.WithFields(log.Fields{
+				"Method": ctx.Method + " " + ctx.URL.Path,
+				"time":   d,
+			}).Info("log test")
+		})
+
+		setContext(&ctx, w, r, ps)
+
+		controller(ctx)
+	})
+}
+
+// PUT vv
+func (r *LRouter) DELETE(path string, controller func(ctx_para Context)) {
+	var ctx Context
+
+	Libra.Router.DELETE(path, func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+		defer util.CalcTimeEnd(time.Now(), func(d time.Duration) {
+			log.WithFields(log.Fields{
+				"Method": ctx.Method + " " + ctx.URL.Path,
+				"time":   d,
+			}).Info("log test")
+		})
+
+		setContext(&ctx, w, r, ps)
+
+		controller(ctx)
+	})
 }
