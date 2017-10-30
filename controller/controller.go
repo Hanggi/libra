@@ -5,21 +5,13 @@ import (
 	"html/template"
 	"net/http"
 	"net/url"
+	"time"
 
 	// "../../libra"
+	"github.com/Hanggi/libra/util"
 	"github.com/julienschmidt/httprouter"
 	log "github.com/sirupsen/logrus"
 )
-
-// type Controller struct {
-// 	// Ctx       *Context
-// 	// Tpl       *template.Template
-// 	Data      map[interface{}]interface{}
-// 	ChildName string
-// 	TplNames  string
-// 	Layout    []string
-// 	TplExt    string
-// }
 
 // Context ..
 /*Context struct
@@ -34,6 +26,8 @@ type Context struct {
 	URL        *url.URL
 	Proto      string
 	ProtoMajor string
+	IPp        string
+	Form       url.Values
 }
 
 var (
@@ -70,24 +64,25 @@ func (c *Controller) Route(route func(ctx_para Context)) httprouter.Handle {
 
 		ctx.Method = r.Method
 		ctx.URL = r.URL
+		ctx.IPp = r.RemoteAddr
 
-		// fmt.Println("\n", r, "[\n]")
+		fmt.Printf("%+v \n\n", r)
+		// fmt.Println(ps, "\n!!")
 
-		fmt.Printf("%+v", r)
-		fmt.Println(ps, "\n!!")
+		if ctx.Method == "POST" {
+			r.ParseForm()
+			ctx.Form = r.Form
+		}
 
-		// PrettyPrint(r)
-
-		log.WithFields(log.Fields{
-			"Method": ctx.Method,
-			"size":   10,
-		}).Info("log test")
+		start := time.Now()
+		defer util.CalcTimeEnd(start, func(d time.Duration) {
+			log.WithFields(log.Fields{
+				"Method": ctx.Method,
+				"time":   d,
+			}).Info("log test")
+		})
 
 		route(ctx)
+
 	}
 }
-
-// func PrettyPrint(v interface{}) {
-// 	b, _ := json.MarshalIndent(v, "", "  ")
-// 	fmt.Println(string(b))
-// }

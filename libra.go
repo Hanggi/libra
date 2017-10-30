@@ -6,7 +6,7 @@ import (
 	"strconv"
 
 	// "./context"
-	"./controller"
+	"github.com/Hanggi/libra/controller"
 	"github.com/julienschmidt/httprouter"
 )
 
@@ -21,14 +21,14 @@ type App struct {
 
 // Exported App struct
 var (
-	LibraApp  App
+	Libra     App
 	staticDir map[string]string
 )
 
 func init() {
-	LibraApp.Router = httprouter.New()
-	LibraApp.Views = "views"
-	controller.LibraContext.ViewPath = LibraApp.Views
+	Libra.Router = httprouter.New()
+	Libra.Views = "views"
+	controller.LibraContext.ViewPath = Libra.Views
 }
 
 type Person struct {
@@ -37,14 +37,14 @@ type Person struct {
 
 // Static routing
 func (app *App) Static(url string, path string) *App {
-	LibraApp.Router.ServeFiles(url+"/*filepath", http.Dir(path))
+	Libra.Router.ServeFiles(url+"/*filepath", http.Dir(path))
 
 	return app
 }
 
 // Listen function
 func (app *App) Listen(port int) *App {
-	if err := http.ListenAndServe(":"+strconv.Itoa(port), LibraApp.Router); err != nil {
+	if err := http.ListenAndServe(":"+strconv.Itoa(port), Libra.Router); err != nil {
 		log.Fatal("Libra listen error: ", err)
 	}
 
