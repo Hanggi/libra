@@ -5,8 +5,6 @@ import (
 	"html/template"
 	"net/http"
 	"net/url"
-	"regexp"
-	"strconv"
 	"time"
 
 	// "../../libra"
@@ -15,55 +13,6 @@ import (
 	"github.com/julienschmidt/httprouter"
 	log "github.com/sirupsen/logrus"
 )
-
-type formUtil struct {
-}
-
-func (f formUtil) IsNumber(str string) bool {
-	getint, err := strconv.Atoi(str)
-	if err != nil {
-		fmt.Println(err)
-		return false
-	}
-
-	if getint > 100 {
-		//太大了
-	}
-
-	return true
-}
-
-func (f formUtil) IsHan(str string) bool {
-	if m, err := regexp.MatchString("^\\p{Han}+$", str); !m {
-		if err != nil {
-			fmt.Println(err)
-			return false
-		}
-		return false
-	}
-
-	return true
-}
-
-func (f formUtil) IsEng(str string) bool {
-	if m, err := regexp.MatchString("^[a-zA-Z]+$", str); !m {
-		if err != nil {
-			fmt.Println(err)
-			return false
-		}
-		return false
-	}
-
-	return true
-}
-
-func (f formUtil) IsEmail(str string) bool {
-	if m, _ := regexp.MatchString(`^([\w\.\_]{2,10})@(\w{1,}).([a-z]{2,4})$`, str); !m {
-		return false
-	}
-
-	return true
-}
 
 // Context : http route context
 type Context struct {
@@ -131,14 +80,16 @@ func setContext(ctx *Context, w http.ResponseWriter, r *http.Request, ps httprou
 	ctx.GetParam = ps.ByName
 }
 
-type Controller func()
+// Controller vv
+type Controller func(Context)
 
+// Use add middleware
 func (r *LRouter) Use(c Controller) {
 	Libra.middlewares = append(Libra.middlewares, c)
 }
 
 // GET vv
-func (r *LRouter) GET(path string, controller func(ctx_para Context)) {
+func (r *LRouter) GET(path string, controller Controller) {
 	var ctx Context
 
 	Libra.Router.GET(path, func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
@@ -160,7 +111,7 @@ func (r *LRouter) GET(path string, controller func(ctx_para Context)) {
 }
 
 // POST vv
-func (r *LRouter) POST(path string, controller func(ctx_para Context)) {
+func (r *LRouter) POST(path string, controller Controller) {
 	var ctx Context
 
 	Libra.Router.POST(path, func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
@@ -182,7 +133,7 @@ func (r *LRouter) POST(path string, controller func(ctx_para Context)) {
 }
 
 // PUT vv
-func (r *LRouter) PUT(path string, controller func(ctx_para Context)) {
+func (r *LRouter) PUT(path string, controller Controller) {
 	var ctx Context
 
 	Libra.Router.GET(path, func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
@@ -200,7 +151,7 @@ func (r *LRouter) PUT(path string, controller func(ctx_para Context)) {
 }
 
 // DELETE vv
-func (r *LRouter) DELETE(path string, controller func(ctx_para Context)) {
+func (r *LRouter) DELETE(path string, controller Controller) {
 	var ctx Context
 
 	Libra.Router.DELETE(path, func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {

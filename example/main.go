@@ -22,7 +22,7 @@ type data struct {
 	Job  string
 }
 
-func middleware() {
+func middleware(ctx libra.Context) {
 	fmt.Println("fff")
 }
 

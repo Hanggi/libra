@@ -22,6 +22,7 @@ type App struct {
 	Log     Log
 	// context    controller.LibraContext
 	middlewares []Controller
+	Session     Session
 }
 
 // Exported App struct
@@ -34,6 +35,7 @@ func init() {
 	Libra.Router = httprouter.New()
 	Libra.Views = "views"
 	Libra.Context.ViewPath = Libra.Views
+	Libra.Session.New()
 }
 
 // Static routing
@@ -48,8 +50,11 @@ type middleware struct {
 }
 
 func (m *middleware) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	var ctx Context
+	ctx.r = r
+	ctx.w = w
 	for _, value := range Libra.middlewares {
-		value()
+		value(ctx)
 	}
 	m.handler.ServeHTTP(w, r)
 }
