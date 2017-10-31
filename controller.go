@@ -84,7 +84,7 @@ type Context struct {
 
 // Render in context
 func (ctx *Context) Render(view string, data interface{}) {
-	fmt.Println("in Render")
+	// fmt.Println("in Render")
 
 	t, err := template.ParseFiles(Libra.Context.ViewPath + "/" + view + ".html")
 
@@ -131,6 +131,12 @@ func setContext(ctx *Context, w http.ResponseWriter, r *http.Request, ps httprou
 	ctx.GetParam = ps.ByName
 }
 
+type Controller func()
+
+func (r *LRouter) Use(c Controller) {
+	Libra.middlewares = append(Libra.middlewares, c)
+}
+
 // GET vv
 func (r *LRouter) GET(path string, controller func(ctx_para Context)) {
 	var ctx Context
@@ -138,16 +144,16 @@ func (r *LRouter) GET(path string, controller func(ctx_para Context)) {
 	Libra.Router.GET(path, func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		defer util.CalcTimeEnd(time.Now(), func(d time.Duration) {
 			log.WithFields(log.Fields{
-				"Method": ctx.Method + " " + ctx.URL.Path,
-				"time":   d,
-			}).Info("log test")
+				// "Method": ctx.Method + " " + ctx.URL.Path,
+				"time": d,
+			}).Info("[" + ctx.Method + "] " + ctx.URL.Path)
 		})
 
 		setContext(&ctx, w, r, ps)
-		fmt.Printf("%+v \n", r)
-		fmt.Println(ctx.Query)
-		fmt.Println(ps)
-		fmt.Println(ctx.GetParam("id"))
+		// fmt.Printf("%+v \n", r)
+		// fmt.Println(ctx.Query)
+		// fmt.Println(ps)
+		// fmt.Println(ctx.GetParam("id"))
 
 		controller(ctx)
 	})
@@ -160,9 +166,9 @@ func (r *LRouter) POST(path string, controller func(ctx_para Context)) {
 	Libra.Router.POST(path, func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		defer util.CalcTimeEnd(time.Now(), func(d time.Duration) {
 			log.WithFields(log.Fields{
-				"Method": ctx.Method + " " + ctx.URL.Path,
-				"time":   d,
-			}).Info("log test")
+				// "Method": ctx.Method + " " + ctx.URL.Path,
+				"time": d,
+			}).Info(ctx.Method + " " + ctx.URL.Path)
 		})
 
 		if ctx.Method == "POST" {
@@ -182,9 +188,9 @@ func (r *LRouter) PUT(path string, controller func(ctx_para Context)) {
 	Libra.Router.GET(path, func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		defer util.CalcTimeEnd(time.Now(), func(d time.Duration) {
 			log.WithFields(log.Fields{
-				"Method": ctx.Method + " " + ctx.URL.Path,
-				"time":   d,
-			}).Info("log test")
+				// "Method": ctx.Method + " " + ctx.URL.Path,
+				"time": d,
+			}).Info(ctx.Method + " " + ctx.URL.Path)
 		})
 
 		setContext(&ctx, w, r, ps)
@@ -200,9 +206,9 @@ func (r *LRouter) DELETE(path string, controller func(ctx_para Context)) {
 	Libra.Router.DELETE(path, func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		defer util.CalcTimeEnd(time.Now(), func(d time.Duration) {
 			log.WithFields(log.Fields{
-				"Method": ctx.Method + " " + ctx.URL.Path,
-				"time":   d,
-			}).Info("log test")
+				// "Method": ctx.Method + " " + ctx.URL.Path,
+				"time": d,
+			}).Info(ctx.Method + " " + ctx.URL.Path)
 		})
 
 		setContext(&ctx, w, r, ps)

@@ -21,6 +21,7 @@ type App struct {
 	Context Context
 	Log     Log
 	// context    controller.LibraContext
+	middlewares []Controller
 }
 
 // Exported App struct
@@ -35,10 +36,6 @@ func init() {
 	Libra.Context.ViewPath = Libra.Views
 }
 
-// type Person struct {
-// 	UserName string
-// }
-
 // Static routing
 func (app *App) Static(url string, path string) *App {
 	Libra.Router.ServeFiles(url+"/*filepath", http.Dir(path))
@@ -46,9 +43,20 @@ func (app *App) Static(url string, path string) *App {
 	return app
 }
 
+type middleware struct {
+	handler http.Handler
+}
+
+func (m *middleware) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	for _, value := range Libra.middlewares {
+		value()
+	}
+	m.handler.ServeHTTP(w, r)
+}
+
 // Listen function
 func (app *App) Listen(port int) *App {
-	if err := http.ListenAndServe(":"+strconv.Itoa(port), Libra.Router); err != nil {
+	if err := http.ListenAndServe(":"+strconv.Itoa(port), &middleware{Libra.Router}); err != nil {
 		log.Fatal("Libra listen error: ", err)
 	}
 
@@ -62,17 +70,3 @@ func (app *App) ListenAnd(port int, and func()) *App {
 
 	return app
 }
-
-// func Test() {
-// 	fmt.Println("lib test")
-// }
-
-// json := `{"data": {"a": "json str2", "b": 2, "c": [1, 2, 3]}}`
-// js, err := simplejson.NewJson([]byte(json))
-// if err != nil {
-// 	fmt.Println("err json")
-// }
-// a := js.Get("data").Get("a").MustString()
-// fmt.Println(a)
-
-// t.Execute(w, Person{UserName: a})

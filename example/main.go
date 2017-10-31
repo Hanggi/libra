@@ -22,9 +22,15 @@ type data struct {
 	Job  string
 }
 
+func middleware() {
+	fmt.Println("fff")
+}
+
 func main() {
 
 	app.Static("/public", "public")
+
+	router.Use(middleware)
 
 	router.GET("/", route.Index)
 	router.GET("/test", route.Test)
