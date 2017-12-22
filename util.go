@@ -63,3 +63,12 @@ func (f formUtil) IsEmail(str string) bool {
 
 	return true
 }
+
+// Convenience function for printing to stdout
+func P(a ...interface{}) {
+	fmt.Println(a)
+}
+
+func Version() {
+	return "0.1"
+}

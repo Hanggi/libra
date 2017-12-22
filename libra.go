@@ -14,6 +14,7 @@ import (
 // App struct
 type App struct {
 	Port    int
+	Config  Config
 	Router  *httprouter.Router
 	LRouter LRouter
 	Views   string
@@ -36,6 +37,11 @@ func init() {
 	Libra.Views = "views"
 	Libra.Context.ViewPath = Libra.Views
 	Libra.Session.New()
+}
+
+// New vv
+func New() App {
+	return Libra
 }
 
 // Static routing
@@ -61,6 +67,15 @@ func (m *middleware) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 // Listen function
 func (app *App) Listen(port int) *App {
+	if port <= 0 {
+		port = app.Config.Port
+	}
+
+	// server := http.Server{
+	// 	Addr: "127.0.0.1:" + strconv.Itoa(port),
+	// 	handler: &middleware{Libra.Router}
+	// }
+
 	if err := http.ListenAndServe(":"+strconv.Itoa(port), &middleware{Libra.Router}); err != nil {
 		log.Fatal("Libra listen error: ", err)
 	}

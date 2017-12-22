@@ -4,5 +4,9 @@ package libra
 
 // Config vv
 type Config struct {
-	port int
+	Port int
+}
+
+func init() {
+	Libra.Config.Port = 5555
 }

@@ -5,7 +5,6 @@ import (
 	"encoding/base64"
 	"fmt"
 	"io"
-	"sync"
 
 	"github.com/garyburd/redigo/redis"
 )
@@ -16,7 +15,7 @@ import (
 type Session struct {
 	sessionID string
 	lifeTime  int64
-	lock      sync.Mutex
+	// lock      sync.Mutex
 }
 
 // New vv
