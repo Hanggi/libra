@@ -55,6 +55,7 @@ type middleware struct {
 	handler http.Handler
 }
 
+// middleware interface imple
 func (m *middleware) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	var ctx Context
 	ctx.r = r
@@ -71,13 +72,13 @@ func (app *App) Listen(port int) *App {
 		port = app.Config.Port
 	}
 
-	// server := http.Server{
-	// 	Addr: "127.0.0.1:" + strconv.Itoa(port),
-	// 	handler: &middleware{Libra.Router}
-	// }
+	server := http.Server{
+		Addr:    "127.0.0.1:" + strconv.Itoa(port),
+		Handler: &middleware{Libra.Router},
+	}
 
-	if err := http.ListenAndServe(":"+strconv.Itoa(port), &middleware{Libra.Router}); err != nil {
-		log.Fatal("Libra listen error: ", err)
+	if err := server.ListenAndServe(); err != nil {
+		log.Fatal("error eeee")
 	}
 
 	return app

@@ -12,10 +12,20 @@ import (
 	"github.com/Hanggi/libra/util"
 	"github.com/julienschmidt/httprouter"
 	log "github.com/sirupsen/logrus"
+	"golang.org/x/net/context"
 )
 
 // Context : http route context
+type xContext = context.Context
+
+func init() {
+
+	//	fmt.Printf("%+v \n", CC.)
+
+}
+
 type Context struct {
+	xContext
 	w          http.ResponseWriter
 	r          *http.Request
 	ps         httprouter.Params
@@ -32,7 +42,7 @@ type Context struct {
 }
 
 // Render in context
-func (ctx *Context) Render(view string, data interface{}) {
+func (ctx Context) Render(view string, data interface{}) {
 	// fmt.Println("in Render")
 
 	t, err := template.ParseFiles(Libra.Context.ViewPath + "/" + view + ".html")

@@ -23,6 +23,7 @@ func (s Session) New() {
 	c, err := redis.Dial("tcp", ":6379")
 	if err != nil {
 		fmt.Println("Connect to Redis server failed!")
+		return
 	}
 	if _, err := c.Do("AUTH", "qq110119120"); err != nil {
 		fmt.Println("Auth failed!")
