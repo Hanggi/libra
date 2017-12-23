@@ -36,7 +36,7 @@ type Context struct {
 	ProtoMajor string
 	IPp        string
 	Form       url.Values
-	Validate   formUtil
+	Validate   FormUtil
 	Query      url.Values
 	GetParam   func(string) string
 }
@@ -74,10 +74,6 @@ func (ctx *Context) GetCookie(name string) *http.Cookie {
 	return cookie
 }
 
-// LRouter vv
-type LRouter struct {
-}
-
 func setContext(ctx *Context, w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	ctx.w = w
 	ctx.r = r
@@ -92,11 +88,6 @@ func setContext(ctx *Context, w http.ResponseWriter, r *http.Request, ps httprou
 
 // Controller vv
 type Controller func(Context)
-
-// Use add middleware
-func (r *LRouter) Use(c Controller) {
-	Libra.middlewares = append(Libra.middlewares, c)
-}
 
 // GET vv
 func (r *LRouter) GET(path string, controller Controller) {
@@ -132,10 +123,11 @@ func (r *LRouter) POST(path string, controller Controller) {
 			}).Info(ctx.Method + " " + ctx.URL.Path)
 		})
 
+		setContext(&ctx, w, r, ps)
 		if ctx.Method == "POST" {
 			r.ParseForm()
 			ctx.Form = r.Form
-			fmt.Printf("%+v", ctx.Form)
+			//			fmt.Println(ctx.Form)
 		}
 
 		controller(ctx)

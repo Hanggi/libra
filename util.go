@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"regexp"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -15,11 +16,11 @@ func CalcTimeEnd(start time.Time, callback func(duration time.Duration)) {
 	callback(d)
 }
 
-type formUtil struct {
+type FormUtil struct {
 }
 
-func (f formUtil) IsNumber(str string) bool {
-	getint, err := strconv.Atoi(str)
+func (f FormUtil) IsNumber(str string) bool {
+	getint, err := strconv.Atoi(strings.TrimSpace(str))
 	if err != nil {
 		fmt.Println(err)
 		return false
@@ -32,7 +33,7 @@ func (f formUtil) IsNumber(str string) bool {
 	return true
 }
 
-func (f formUtil) IsHan(str string) bool {
+func (f FormUtil) IsHan(str string) bool {
 	if m, err := regexp.MatchString("^\\p{Han}+$", str); !m {
 		if err != nil {
 			fmt.Println(err)
@@ -44,7 +45,7 @@ func (f formUtil) IsHan(str string) bool {
 	return true
 }
 
-func (f formUtil) IsEng(str string) bool {
+func (f FormUtil) IsEng(str string) bool {
 	if m, err := regexp.MatchString("^[a-zA-Z]+$", str); !m {
 		if err != nil {
 			fmt.Println(err)
@@ -56,7 +57,7 @@ func (f formUtil) IsEng(str string) bool {
 	return true
 }
 
-func (f formUtil) IsEmail(str string) bool {
+func (f FormUtil) IsEmail(str string) bool {
 	if m, _ := regexp.MatchString(`^([\w\.\_]{2,10})@(\w{1,}).([a-z]{2,4})$`, str); !m {
 		return false
 	}
@@ -67,6 +68,10 @@ func (f formUtil) IsEmail(str string) bool {
 // Convenience function for printing to stdout
 func P(a ...interface{}) {
 	fmt.Println(a)
+}
+
+func V(str string, v interface{}) {
+	fmt.Printf(str+": %v \n", v)
 }
 
 func Version() string {

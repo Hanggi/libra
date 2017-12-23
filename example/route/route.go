@@ -2,6 +2,7 @@ package route
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/Hanggi/libra"
 	// "github.com/Hanggi/libra/controller"
@@ -34,7 +35,7 @@ func init() {
 
 // Index route
 func Index(ctx libra.Context) {
-	fmt.Println("in Index")
+	fmt.Println("in Index!")
 
 	ctx.Render("index", nil)
 
@@ -44,6 +45,37 @@ type data struct {
 	Name string
 	Age  int
 	Job  string
+}
+
+// Form
+func FormInput(ctx libra.Context) {
+
+	type data struct {
+		Title    string
+		name     int
+		password string
+	}
+
+	ctx.Render("form_input", data{"This is form input", 1, "vv"})
+}
+func FormInputPost(ctx libra.Context) {
+
+	//	fmt.Println(ctx.Form)
+	type data struct {
+		Title    string
+		Username string
+		Password string
+		IsNumber bool
+	}
+
+	var isNumber bool
+	if ctx.Validate.IsNumber(strings.Join(ctx.Form["password"], "")) {
+		isNumber = true
+	} else {
+		isNumber = false
+	}
+
+	ctx.Render("form_input", data{"This is form input", strings.Join(ctx.Form["username"], ""), strings.Join(ctx.Form["password"], ""), isNumber})
 }
 
 // Test vv

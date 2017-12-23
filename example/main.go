@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"net/http"
 
 	"github.com/Hanggi/libra"
 	"github.com/Hanggi/libra/example/route"
@@ -24,8 +25,23 @@ type data struct {
 	Job  string
 }
 
-func middleware(ctx libra.Context) {
-	fmt.Println("fff")
+func middleware(rw http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
+	fmt.Println("This is a 111 middleware!")
+
+	//	defer util.CalcTimeEnd(time.Now(), func(d time.Duration) {
+	//		fmt.Println(d, "\n")
+	//	})
+	next(rw, r)
+	fmt.Println("middleware 111 end!!!")
+}
+func middleware2(rw http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
+	fmt.Println("This is a middleware22222!")
+
+	//	defer util.CalcTimeEnd(time.Now(), func(d time.Duration) {
+	//		fmt.Println(d, "\n")
+	//	})
+	next(rw, r)
+	fmt.Println("This is a middleware22222  end!")
 }
 
 func checkErr(err error) {
@@ -49,7 +65,7 @@ func main() {
 	// stmt, err := db.Prepare("INSERT test1 SET username=?,age=?,salary=?")
 	// checkErr(err)
 
-	// res, err := stmt.Exec("ff", "235", "1129")
+	// res, err := stmt.Exec("ff", "235", "1129")1
 	// checkErr(err)
 
 	// id, err := res.LastInsertId()
@@ -57,6 +73,10 @@ func main() {
 	// fmt.Println(id)
 
 	router.Use(middleware)
+	router.Use(middleware2)
+
+	router.GET("/form/input", route.FormInput)
+	router.POST("/form/input", route.FormInputPost)
 
 	router.GET("/", route.Index)
 	router.GET("/test", route.Test)
