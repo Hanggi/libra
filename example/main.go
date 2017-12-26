@@ -2,11 +2,14 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/Hanggi/libra"
 	"github.com/Hanggi/libra/example/route"
+	"github.com/Hanggi/libra/util"
 
 	_ "github.com/go-sql-driver/mysql"
+	log "github.com/sirupsen/logrus"
 )
 
 var (
@@ -37,10 +40,13 @@ func middleware(ctx *libra.Context) {
 func middleware2(ctx *libra.Context) {
 	fmt.Println("This is a middleware22222!")
 
-	//	defer util.CalcTimeEnd(time.Now(), func(d time.Duration) {
-	//		fmt.Println(d, "\n")
-	//	})lk
-	//	next(ctx.Rw, ctx.R)
+	defer util.CalcTimeEnd(time.Now(), func(d time.Duration) {
+		log.WithFields(log.Fields{
+			// "Method": ctx.Method + " " + ctx.URL.Path,
+			"time": d,
+		}).Info("[" + ctx.Method + "] " + ctx.URL.Path)
+	})
+
 	ctx.Next()
 	fmt.Println("This is a middleware22222  end!")
 }

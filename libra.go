@@ -82,6 +82,10 @@ func (app *App) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	ctx.rw = rw
 	ctx.w = rw
 	ctx.r = r
+
+	ctx.Method = r.Method
+	ctx.URL = r.URL
+
 	ctx.reset()
 	ctx.router = app.Router
 	// Here, needs init
@@ -111,12 +115,7 @@ func (app *App) GET(path string, c Controller) {
 	//	var ctx *Context
 	//	PP("app router get", path)
 	app.Router.GET(path, func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-		//		defer util.CalcTimeEnd(time.Now(), func(d time.Duration) {
-		//			log.WithFields(log.Fields{
-		//				// "Method": ctx.Method + " " + ctx.URL.Path,
-		//				"time": d,
-		//			}).Info("[" + ctx.Method + "] " + ctx.URL.Path)
-		//		})
+
 		//		ctx.ps = ps
 
 		//		setContext(ctx, w, r, ps)
