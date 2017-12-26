@@ -34,8 +34,9 @@ func init() {
 // }
 
 // Index route
-func Index(ctx libra.Context) {
+func Index(ctx *libra.Context) {
 	fmt.Println("in Index!")
+	//	fmt.Printf("Index: %+V\n", ctx)
 
 	ctx.Render("index", nil)
 
@@ -48,7 +49,7 @@ type data struct {
 }
 
 // Form
-func FormInput(ctx libra.Context) {
+func FormInput(ctx *libra.Context) {
 
 	type data struct {
 		Title    string
@@ -58,7 +59,7 @@ func FormInput(ctx libra.Context) {
 
 	ctx.Render("form_input", data{"This is form input", 1, "vv"})
 }
-func FormInputPost(ctx libra.Context) {
+func FormInputPost(ctx *libra.Context) {
 
 	//	fmt.Println(ctx.Form)
 	type data struct {

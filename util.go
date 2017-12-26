@@ -66,8 +66,12 @@ func (f FormUtil) IsEmail(str string) bool {
 }
 
 // Convenience function for printing to stdout
-func P(a ...interface{}) {
+func PP(a ...interface{}) {
 	fmt.Println(a)
+}
+
+func P(v interface{}) {
+	fmt.Println(v)
 }
 
 func V(str string, v interface{}) {
@@ -76,6 +80,12 @@ func V(str string, v interface{}) {
 
 func Version() string {
 	return "0.1"
+}
+
+func DebugP(str string) {
+	if DEBUG {
+		fmt.Println(str)
+	}
 }
 
 //func loadConfig() {

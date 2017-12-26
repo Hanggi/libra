@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"net/http"
 
 	"github.com/Hanggi/libra"
 	"github.com/Hanggi/libra/example/route"
@@ -25,22 +24,24 @@ type data struct {
 	Job  string
 }
 
-func middleware(rw http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
+func middleware(ctx *libra.Context) {
 	fmt.Println("This is a 111 middleware!")
 
 	//	defer util.CalcTimeEnd(time.Now(), func(d time.Duration) {
 	//		fmt.Println(d, "\n")
 	//	})
-	next(rw, r)
+	//	next(ctx.Rw, ctx.R)
+	ctx.Next()
 	fmt.Println("middleware 111 end!!!")
 }
-func middleware2(rw http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
+func middleware2(ctx *libra.Context) {
 	fmt.Println("This is a middleware22222!")
 
 	//	defer util.CalcTimeEnd(time.Now(), func(d time.Duration) {
 	//		fmt.Println(d, "\n")
-	//	})
-	next(rw, r)
+	//	})lk
+	//	next(ctx.Rw, ctx.R)
+	ctx.Next()
 	fmt.Println("This is a middleware22222  end!")
 }
 
@@ -52,10 +53,10 @@ func checkErr(err error) {
 
 func main() {
 	app := libra.New()
-	port := app.Config.Port
-	port = 5555
+	//	port := app.Config.Port
+	port := 5555
 
-	router := app.LRouter
+	//	router := app.LRouter
 
 	app.Static("/public", "public")
 
@@ -72,21 +73,21 @@ func main() {
 
 	// fmt.Println(id)
 
-	router.Use(middleware)
-	router.Use(middleware2)
+	app.Use(middleware)
+	app.Use(middleware2)
 
-	router.GET("/form/input", route.FormInput)
-	router.POST("/form/input", route.FormInputPost)
+	//	router.GET("/form/input", route.FormInput)
+	//	router.POST("/form/input", route.FormInputPost)
 
-	router.GET("/", route.Index)
-	router.GET("/test", route.Test)
-	router.GET("/test/:id", route.Test)
-	router.GET("/test/:id/*action", route.Test)
-	router.GET("/post", func(ctx libra.Context) {
-		fmt.Println("in get post")
+	app.GET("/", route.Index)
+	//	router.GET("/test", route.Test)
+	//	router.GET("/test/:id", route.Test)
+	//	router.GET("/test/:id/*action", route.Test)
+	//	router.GET("/post", func(ctx libra.Context) {
+	//		fmt.Println("in get post")
 
-		ctx.Render("post", data{"data's name", 12, "mamada"})
-	})
+	//		ctx.Render("post", data{"data's name", 12, "mamada"})
+	//	})
 
 	app.ListenAnd(port, func() {
 		fmt.Printf("listening at port: %d\n", port)

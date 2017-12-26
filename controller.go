@@ -26,8 +26,12 @@ func init() {
 
 type Context struct {
 	xContext
-	w          http.ResponseWriter
-	r          *http.Request
+
+	w  http.ResponseWriter
+	rw http.ResponseWriter
+	r  *http.Request
+	//	Rw         http.ResponseWriter
+	//	R          *http.Request
 	ps         httprouter.Params
 	ViewPath   string
 	Method     string
@@ -39,13 +43,27 @@ type Context struct {
 	Validate   FormUtil
 	Query      url.Values
 	GetParam   func(string) string
+
+	app      *App
+	index    int8
+	handlers []Controller
+	router   *httprouter.Router
+}
+
+func (ctx *Context) reset() {
+	ctx.index = -1
+	ctx.handlers = nil
 }
 
 // Render in context
-func (ctx Context) Render(view string, data interface{}) {
+func (ctx *Context) Render(view string, data interface{}) {
 	// fmt.Println("in Render")
+	//	V("ctx.app: ", ctx)
+	//	P("!!!!!!!!!!!!!!!!!!!!!!")
 
-	t, err := template.ParseFiles(Libra.Context.ViewPath + "/" + view + ".html")
+	path := ctx.app.Views + "/" + view + ".html"
+
+	t, err := template.ParseFiles(path)
 
 	if err != nil {
 		fmt.Println("【Error】", err)
@@ -53,6 +71,7 @@ func (ctx Context) Render(view string, data interface{}) {
 		return
 	}
 	t.Execute(ctx.w, data)
+	//	t.Execute(ctx.rw, "Hello")
 }
 
 // SetCookie vv
@@ -87,11 +106,61 @@ func setContext(ctx *Context, w http.ResponseWriter, r *http.Request, ps httprou
 }
 
 // Controller vv
-type Controller func(Context)
+type Controller func(ctx *Context)
+
+func (ctx *Context) Next() {
+	ctx.index++
+	//	V("ctx.handlers: ", ctx.handlers)
+	if ctx.index < int8(len(ctx.handlers)) {
+		ctx.handlers[ctx.index](ctx)
+	} else {
+		//		httprouter.serveHTTP()
+		ctx.router.ServeHTTP(ctx.rw, ctx.r)
+	}
+}
+
+/*
+ * LRouter which support middleware with next function without any warpper
+ */
+type LRouter struct {
+	//	middleware middleware
+	handlers []Controller
+}
+
+func (l *LRouter) handleHTTPRequest(ctx *Context) {
+	//	P("lrouter http request")
+
+	ctx.index = 0
+
+	if l.handlers != nil {
+		//		l.handlers
+		ctx.handlers = l.handlers
+		l.handlers[0](ctx)
+	}
+}
+
+// middlware struct
+type middleware struct {
+	//	handler ContextHandler
+	next *middleware
+}
+
+// Use add middleware
+func (l *LRouter) Use(c ...Controller) {
+	//	var next middleware
+
+	if c == nil {
+		fmt.Println("controller can not be nil!")
+	}
+
+	l.handlers = append(l.handlers, c...)
+	//	V("handlers", l.handlers)
+	//	l.middleware = build(l.handlers)
+}
 
 // GET vv
 func (r *LRouter) GET(path string, controller Controller) {
-	var ctx Context
+	var ctx *Context
 
 	Libra.Router.GET(path, func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		defer util.CalcTimeEnd(time.Now(), func(d time.Duration) {
@@ -101,7 +170,7 @@ func (r *LRouter) GET(path string, controller Controller) {
 			}).Info("[" + ctx.Method + "] " + ctx.URL.Path)
 		})
 
-		setContext(&ctx, w, r, ps)
+		setContext(ctx, w, r, ps)
 		// fmt.Printf("%+v \n", r)
 		// fmt.Println(ctx.Query)
 		// fmt.Println(ps)
@@ -113,7 +182,7 @@ func (r *LRouter) GET(path string, controller Controller) {
 
 // POST vv
 func (r *LRouter) POST(path string, controller Controller) {
-	var ctx Context
+	var ctx *Context
 
 	Libra.Router.POST(path, func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		defer util.CalcTimeEnd(time.Now(), func(d time.Duration) {
@@ -123,7 +192,7 @@ func (r *LRouter) POST(path string, controller Controller) {
 			}).Info(ctx.Method + " " + ctx.URL.Path)
 		})
 
-		setContext(&ctx, w, r, ps)
+		setContext(ctx, w, r, ps)
 		if ctx.Method == "POST" {
 			r.ParseForm()
 			ctx.Form = r.Form
@@ -136,7 +205,7 @@ func (r *LRouter) POST(path string, controller Controller) {
 
 // PUT vv
 func (r *LRouter) PUT(path string, controller Controller) {
-	var ctx Context
+	var ctx *Context
 
 	Libra.Router.GET(path, func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		defer util.CalcTimeEnd(time.Now(), func(d time.Duration) {
@@ -146,7 +215,7 @@ func (r *LRouter) PUT(path string, controller Controller) {
 			}).Info(ctx.Method + " " + ctx.URL.Path)
 		})
 
-		setContext(&ctx, w, r, ps)
+		setContext(ctx, w, r, ps)
 
 		controller(ctx)
 	})
@@ -154,7 +223,7 @@ func (r *LRouter) PUT(path string, controller Controller) {
 
 // DELETE vv
 func (r *LRouter) DELETE(path string, controller Controller) {
-	var ctx Context
+	var ctx *Context
 
 	Libra.Router.DELETE(path, func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		defer util.CalcTimeEnd(time.Now(), func(d time.Duration) {
@@ -164,7 +233,7 @@ func (r *LRouter) DELETE(path string, controller Controller) {
 			}).Info(ctx.Method + " " + ctx.URL.Path)
 		})
 
-		setContext(&ctx, w, r, ps)
+		setContext(ctx, w, r, ps)
 
 		controller(ctx)
 	})
