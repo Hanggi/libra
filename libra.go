@@ -1,3 +1,5 @@
+// Copyright 2017 Hanggi.
+
 package libra
 
 import (
@@ -23,9 +25,9 @@ type App struct {
 	Context *Context
 	Log     Log
 	// context    controller.LibraContext
-	middlewares []Controller
-	Session     Session
-	pool        sync.Pool
+	//	middlewares []Controller
+	Session Session
+	pool    sync.Pool
 }
 
 // Exported App struct
@@ -43,7 +45,7 @@ func init() {
 	//	Libra.Session.New()
 }
 
-// New vv
+// New function return a app instance with context allocated
 func New() *App {
 
 	ll := &App{
@@ -63,11 +65,12 @@ func New() *App {
 	return ll
 }
 
+// allocateContext function return a context instance into sync.pool
 func (app *App) allocateContext() *Context {
 	return &Context{app: app}
 }
 
-// Static routing
+// Static function set the static file path with path string
 func (app *App) Static(url string, path string) *App {
 	app.Router.ServeFiles(url+"/*filepath", http.Dir(path))
 
@@ -100,11 +103,7 @@ func (app *App) handleHTTPRequest(ctx *Context) {
 	//	DebugP("handleHTTPRequest")
 	//	httpMethod := ctx.r.Method
 	//	path := ctx.r.URL
-
-	//	P(httpMethod)
-	//	P(path)
 	app.LRouter.handleHTTPRequest(ctx)
-
 }
 
 func (app *App) Use(middles ...Controller) {
@@ -112,22 +111,13 @@ func (app *App) Use(middles ...Controller) {
 }
 
 func (app *App) GET(path string, c Controller) {
-	//	var ctx *Context
-	//	PP("app router get", path)
 	app.Router.GET(path, func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-
-		//		ctx.ps = ps
-
-		//		setContext(ctx, w, r, ps)
-		// fmt.Printf("%+v \n", r)
-		// fmt.Println(ctx.Query)
-		// fmt.Println(ps)
-		// fmt.Println(ctx.GetParam("id"))
-		//		P("GETGET!!!")
 		ctx := app.pool.Get().(*Context)
 		ctx.w = w
 		ctx.rw = w
 		ctx.r = r
+		ctx.Rw = w
+		ctx.R = r
 
 		c(ctx)
 
@@ -135,27 +125,19 @@ func (app *App) GET(path string, c Controller) {
 	})
 }
 
-/*
- *	middleware module
- */
-
 // Listen function
 func (app *App) Listen(port int) *App {
 	if port <= 0 {
 		port = app.Config.Port
 	}
 
-	//	http.ListenAndServe()
-
 	server := http.Server{
 		Addr:    "127.0.0.1:" + strconv.Itoa(port),
 		Handler: app,
-		//		Handler: &middleware2{Libra.Router},
-		//		Handler: exampleMiddleware(Libra.Router),
 	}
 
 	if err := server.ListenAndServe(); err != nil {
-		log.Fatal("error eeee")
+		log.Fatal("Listen error: ", err)
 	}
 
 	return app

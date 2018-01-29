@@ -22,7 +22,7 @@ type FormUtil struct {
 func (f FormUtil) IsNumber(str string) bool {
 	getint, err := strconv.Atoi(strings.TrimSpace(str))
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println(str, "is not a Number!")
 		return false
 	}
 
@@ -39,6 +39,7 @@ func (f FormUtil) IsHan(str string) bool {
 			fmt.Println(err)
 			return false
 		}
+		fmt.Println(str, "is not a Chinese string!")
 		return false
 	}
 

@@ -18,7 +18,7 @@ func TestFormUtil(t *testing.T) {
 
 	test1 = vali.IsNumber("123")
 	assert.Equal(t, test1, true, "IsNumber should be true!")
-	test2 = vali.IsNumber("abc")
+	test2 = vali.IsNumber("abcd")
 	assert.Equal(t, test2, false, "IsNumber should be false!")
 	// test3 = vali.IsNumber("123abc")
 	// assert.Equal(t, test3, false, "IsNumber should be false!")

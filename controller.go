@@ -27,11 +27,11 @@ func init() {
 type Context struct {
 	xContext
 
-	w  http.ResponseWriter
-	rw http.ResponseWriter
-	r  *http.Request
-	//	Rw         http.ResponseWriter
-	//	R          *http.Request
+	w          http.ResponseWriter
+	rw         http.ResponseWriter
+	r          *http.Request
+	Rw         http.ResponseWriter
+	R          *http.Request
 	ps         httprouter.Params
 	ViewPath   string
 	Method     string
@@ -58,9 +58,6 @@ func (ctx *Context) reset() {
 // Render in context
 func (ctx *Context) Render(view string, data interface{}) {
 	// fmt.Println("in Render")
-	//	V("ctx.app: ", ctx)
-	//	P("!!!!!!!!!!!!!!!!!!!!!!")
-
 	path := ctx.app.Views + "/" + view + ".html"
 
 	t, err := template.ParseFiles(path)
@@ -71,7 +68,6 @@ func (ctx *Context) Render(view string, data interface{}) {
 		return
 	}
 	t.Execute(ctx.w, data)
-	//	t.Execute(ctx.rw, "Hello")
 }
 
 // SetCookie vv
@@ -136,6 +132,8 @@ func (l *LRouter) handleHTTPRequest(ctx *Context) {
 		//		l.handlers
 		ctx.handlers = l.handlers
 		l.handlers[0](ctx)
+	} else {
+		ctx.router.ServeHTTP(ctx.rw, ctx.r)
 	}
 }
 

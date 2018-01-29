@@ -30,22 +30,18 @@ type data struct {
 func middleware(ctx *libra.Context) {
 	fmt.Println("This is a 111 middleware!")
 
-	//	defer util.CalcTimeEnd(time.Now(), func(d time.Duration) {
-	//		fmt.Println(d, "\n")
-	//	})
-	//	next(ctx.Rw, ctx.R)
-	ctx.Next()
-	fmt.Println("middleware 111 end!!!")
-}
-func middleware2(ctx *libra.Context) {
-	fmt.Println("This is a middleware22222!")
-
 	defer util.CalcTimeEnd(time.Now(), func(d time.Duration) {
 		log.WithFields(log.Fields{
 			// "Method": ctx.Method + " " + ctx.URL.Path,
 			"time": d,
 		}).Info("[" + ctx.Method + "] " + ctx.URL.Path)
 	})
+
+	ctx.Next()
+	fmt.Println("middleware 111 end!!!")
+}
+func middleware2(ctx *libra.Context) {
+	fmt.Println("This is a middleware22222!")
 
 	ctx.Next()
 	fmt.Println("This is a middleware22222  end!")
@@ -86,7 +82,7 @@ func main() {
 	//	router.POST("/form/input", route.FormInputPost)
 
 	app.GET("/", route.Index)
-	//	router.GET("/test", route.Test)
+	app.GET("/test", route.Test)
 	//	router.GET("/test/:id", route.Test)
 	//	router.GET("/test/:id/*action", route.Test)
 	//	router.GET("/post", func(ctx libra.Context) {

@@ -80,10 +80,11 @@ func FormInputPost(ctx *libra.Context) {
 }
 
 // Test vv
-func Test(ctx libra.Context) {
+func Test(ctx *libra.Context) {
 	fmt.Println("in Test")
 
-	ctx.Render("index", data{"data's name", 12, "mamada"})
+	fmt.Fprintf(ctx.Rw, "Hello")
+	//	ctx.Render("index", data{"data's name", 12, "mamada"})
 }
 
 // GetPost vv

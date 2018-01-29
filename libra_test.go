@@ -15,11 +15,11 @@ import (
 
 func TestHTTPListen(t *testing.T) {
 	go func() {
-		var app = new(App)
-		var router = app.LRouter
+		var app = New()
+		//		var router = app.LRouter
 
-		router.GET("/test", func(ctx Context) {
-			fmt.Fprintf(ctx.w, "hello test!")
+		app.GET("/test", func(ctx *Context) {
+			fmt.Fprintf(ctx.Rw, "hello test!")
 		})
 		app.Listen(9090)
 	}()
@@ -30,6 +30,9 @@ func TestHTTPListen(t *testing.T) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	resp, _ := ioutil.ReadAll(res.Body)
+	resp, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Println(err)
+	}
 	assert.Equal(t, "hello test!", string(resp[:]))
 }
