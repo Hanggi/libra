@@ -8,56 +8,56 @@ import (
 	"strconv"
 	"sync"
 
-	// "./context"
-	// "github.com/Hanggi/libra/controller"
-
+	"fmt"
 	"github.com/julienschmidt/httprouter"
 )
 
 // App struct
-type App struct {
+type Libra struct {
+	LRouter
+
 	Port    int
 	Config  Config
 	Router  *httprouter.Router
-	LRouter *LRouter
 	Views   string
-	// Controller Controller
 	Context *Context
 	Log     Log
-	// context    controller.LibraContext
-	//	middlewares []Controller
 	Session Session
 	pool    sync.Pool
+	//LRouter *LRouter
+	// context    controller.LibraContext
+	//	middlewares []Controller
+	// Controller Controller
 }
 
 // Exported App struct
 var (
-	Libra App
+	//Libra App
 	DEBUG bool = true
+	Debug      = LibraDebug{}
 
 //	staticDir map[string]string
 )
 
 func init() {
-	//	Libra.Router = httprouter.New()
-	//	Libra.Views = "views"
-	//	Libra.Context.ViewPath = Libra.Views
-	//	Libra.Session.New()
+
 }
 
 // New function return a app instance with context allocated
-func New() *App {
+func New() *Libra {
 
-	ll := &App{
+	ll := &Libra{
 		Port: 5555,
 		//		Config:  Config,
-		Router: httprouter.New(),
-		LRouter: &LRouter{
-			handlers: nil,
-			//			middleware: middleware{nil, nil},
+		//Router: httprouter.New(),
+		LRouter: LRouter{
+			nil,
+			nil,
+			httprouter.New(),
 		},
 		Views: "views",
 	}
+	ll.LRouter.app = ll
 	ll.pool.New = func() interface{} {
 		return ll.allocateContext()
 	}
@@ -66,74 +66,19 @@ func New() *App {
 }
 
 // allocateContext function return a context instance into sync.pool
-func (app *App) allocateContext() *Context {
+func (app *Libra) allocateContext() *Context {
 	return &Context{app: app}
 }
 
-// Static function set the static file path with path string
-func (app *App) Static(url string, path string) *App {
-	app.Router.ServeFiles(url+"/*filepath", http.Dir(path))
-
-	return app
-}
-
-func (app *App) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
-	//	DebugP("App ServeHTTP")
-
-	ctx := app.pool.Get().(*Context)
-	//	V("ServeHTTP ctx: ", ctx)
-	ctx.rw = rw
-	ctx.w = rw
-	ctx.r = r
-
-	ctx.Method = r.Method
-	ctx.URL = r.URL
-
-	ctx.reset()
-	ctx.router = app.Router
-	// Here, needs init
-
-	app.handleHTTPRequest(ctx)
-
-	app.pool.Put(ctx)
-
-}
-
-func (app *App) handleHTTPRequest(ctx *Context) {
-	//	DebugP("handleHTTPRequest")
-	//	httpMethod := ctx.r.Method
-	//	path := ctx.r.URL
-	app.LRouter.handleHTTPRequest(ctx)
-}
-
-func (app *App) Use(middles ...Controller) {
-	app.LRouter.Use(middles...)
-}
-
-func (app *App) GET(path string, c Controller) {
-	app.Router.GET(path, func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-		ctx := app.pool.Get().(*Context)
-		ctx.w = w
-		ctx.rw = w
-		ctx.r = r
-		ctx.Rw = w
-		ctx.R = r
-
-		c(ctx)
-
-		app.pool.Put(ctx)
-	})
-}
-
 // Listen function
-func (app *App) Listen(port int) *App {
+func (app *Libra) Listen(port int) *Libra {
 	if port <= 0 {
 		port = app.Config.Port
 	}
 
 	server := http.Server{
 		Addr:    "127.0.0.1:" + strconv.Itoa(port),
-		Handler: app,
+		Handler: app, // app implemented ServeHTTP
 	}
 
 	if err := server.ListenAndServe(); err != nil {
@@ -144,9 +89,31 @@ func (app *App) Listen(port int) *App {
 }
 
 // ListenAnd listening functin with and callback
-func (app *App) ListenAnd(port int, and func()) *App {
-	and()
+func (app *Libra) ListenAnd(port int, callback func()) *Libra {
+	callback()
 	app.Listen(port)
 
 	return app
+}
+
+func (app *Libra) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	//Debug.Print("Serve HTTP of app")
+	fmt.Println("Serve HTTP of app")
+	//println("Serve HTTP of app")
+	ctx := app.pool.Get().(*Context)
+	//	V("ServeHTTP ctx: ", ctx)
+	// ctx.rw = w
+	ctx.Rw = w
+	ctx.R = r
+
+	ctx.Method = r.Method
+	ctx.URL = r.URL
+
+	ctx.reset()
+	ctx.router = app.LRouter.router
+	// Here, needs init
+
+	app.handleHTTPRequest(ctx)
+
+	app.pool.Put(ctx)
 }

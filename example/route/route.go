@@ -48,7 +48,7 @@ type data struct {
 	Job  string
 }
 
-// Form
+// FormInput ...
 func FormInput(ctx *libra.Context) {
 
 	type data struct {
@@ -59,6 +59,8 @@ func FormInput(ctx *libra.Context) {
 
 	ctx.Render("form_input", data{"This is form input", 1, "vv"})
 }
+
+// FormInputPost ...
 func FormInputPost(ctx *libra.Context) {
 
 	//	fmt.Println(ctx.Form)

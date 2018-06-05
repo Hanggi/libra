@@ -2,14 +2,9 @@ package main
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/Hanggi/libra"
-	"github.com/Hanggi/libra/example/route"
-	"github.com/Hanggi/libra/util"
-
-	_ "github.com/go-sql-driver/mysql"
-	log "github.com/sirupsen/logrus"
+	// _ "github.com/go-sql-driver/mysql"
 )
 
 var (
@@ -29,13 +24,6 @@ type data struct {
 
 func middleware(ctx *libra.Context) {
 	fmt.Println("This is a 111 middleware!")
-
-	defer util.CalcTimeEnd(time.Now(), func(d time.Duration) {
-		log.WithFields(log.Fields{
-			// "Method": ctx.Method + " " + ctx.URL.Path,
-			"time": d,
-		}).Info("[" + ctx.Method + "] " + ctx.URL.Path)
-	})
 
 	ctx.Next()
 	fmt.Println("middleware 111 end!!!")
@@ -61,6 +49,7 @@ func main() {
 	//	router := app.LRouter
 
 	app.Static("/public", "public")
+	app.Use(libra.Logger())
 
 	// db, err := sql.Open("mysql", "root:qq110119120@/fortest")
 	// checkErr(err)
@@ -78,20 +67,40 @@ func main() {
 	app.Use(middleware)
 	app.Use(middleware2)
 
-	//	router.GET("/form/input", route.FormInput)
-	//	router.POST("/form/input", route.FormInputPost)
+	// app.GET("/form/input", route.FormInput)
+	// app.POST("/form/input", route.FormInputPost)
 
-	app.GET("/", route.Index)
-	app.GET("/test", route.Test)
-	//	router.GET("/test/:id", route.Test)
-	//	router.GET("/test/:id/*action", route.Test)
-	//	router.GET("/post", func(ctx libra.Context) {
-	//		fmt.Println("in get post")
+	app.GET("/", Index)
+	app.GET("/test", Test)
 
-	//		ctx.Render("post", data{"data's name", 12, "mamada"})
-	//	})
+	// Parameters in path
+	app.GET("/param/:id", Param)
 
 	app.ListenAnd(port, func() {
 		fmt.Printf("listening at port: %d\n", port)
 	})
+}
+
+// Index route
+func Index(ctx *libra.Context) {
+	fmt.Println("in Index!")
+	//	fmt.Printf("Index: %+V\n", ctx)
+
+	ctx.Render("index", nil)
+
+}
+
+// Test vv
+func Test(ctx *libra.Context) {
+	fmt.Println("in Test")
+
+	fmt.Fprintf(ctx.Rw, "Hello")
+	//	ctx.Render("index", data{"data's name", 12, "mamada"})
+}
+
+func Param(ctx *libra.Context) {
+	fmt.Println("in Path param")
+	fmt.Println(ctx.Ps)
+
+	fmt.Fprintf(ctx.Rw, "param:"+ctx.Param("id"))
 }

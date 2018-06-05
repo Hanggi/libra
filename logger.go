@@ -3,7 +3,6 @@ package libra
 import (
 	"time"
 
-	"github.com/Hanggi/libra/util"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -13,14 +12,18 @@ import (
 type Log struct {
 }
 
-// HTTPLogger vv
-func (l *Log) HTTPLogger(str string) {
-	defer util.CalcTimeEnd(time.Now(), func(d time.Duration) {
-		log.WithFields(log.Fields{
-			"Method": str,
-			"time":   d,
-		}).Info("log test")
-	})
+// Logger ...
+func Logger() func(*Context) {
+	return func(ctx *Context) {
+		defer calcTimeEnd(time.Now(), func(d time.Duration) {
+			log.WithFields(log.Fields{
+				// "Method": ctx.,
+				"time": d,
+			}).Info("[!!" + ctx.Method + "] " + ctx.URL.Path)
+		})
+		ctx.Next()
+	}
+
 }
 
 func calcTimeEnd(start time.Time, callback func(duration time.Duration)) {
