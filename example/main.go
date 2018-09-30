@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/Hanggi/libra"
-	// _ "github.com/go-sql-driver/mysql"
 )
 
 var (
@@ -75,6 +74,9 @@ func main() {
 
 	// Parameters in path
 	app.GET("/param/:id", Param)
+	//app.GET("/param/:id/:name", Param)
+
+	app.GET("/upload", Upload)
 
 	app.ListenAnd(port, func() {
 		fmt.Printf("listening at port: %d\n", port)
@@ -102,5 +104,11 @@ func Param(ctx *libra.Context) {
 	fmt.Println("in Path param")
 	fmt.Println(ctx.Ps)
 
+	fmt.Println(ctx.Query("id"))
+
 	fmt.Fprintf(ctx.Rw, "param:"+ctx.Param("id"))
+}
+
+func Upload(ctx *libra.Context) {
+	fmt.Println("in Upload")
 }

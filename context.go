@@ -26,8 +26,8 @@ type Context struct {
 	IPp        string
 	Form       url.Values
 	Validate   FormUtil
-	Query      url.Values
-	GetParam   func(string) string
+	//Query      url.Values
+	GetParam func(string) string
 
 	app         *Libra
 	index       int8
@@ -76,5 +76,10 @@ func (ctx *Context) Param(key string) string {
 
 // Query: shortcut
 func (ctx *Context) Query(name string) string {
+	//if name != nil {
+	//	return ctx.R.URL.Query().Get(strings.Join(name, ""))
+	//} else {
+	//	return ctx.R.URL.Query()
+	//}
 	return ctx.R.URL.Query().Get(name)
 }

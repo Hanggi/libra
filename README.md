@@ -1,3 +1,7 @@
-# Libra
+# Libra Web Framework
 
-A web framework based on httprouter.
+A lightweight web framework based on httprouter.
+
+-----------------------------
+
+Libra is a lightweight web framework written in Golang.
