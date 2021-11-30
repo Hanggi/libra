@@ -1,8 +1,12 @@
 package main
 
-import "github.com/Hanggi/libra"
+import (
+	"fmt"
+	l "github.com/Hanggi/libra"
+)
 
 func main() {
-	libra.
-
+	l.Info("hi")
+	a := l.Libra{}
+	fmt.Println(a)
 }

@@ -19,6 +19,6 @@ func New() *Libra {
 	return &Libra{}
 }
 
-func (l *Libra) Info(args ...interface{}) {
-	l.Logrus.Info()
+func Info(args ...interface{}) {
+	libra.Logrus.Info()
 }
