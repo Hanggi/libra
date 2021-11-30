@@ -5,35 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7e633e7e-a6dc-4ae5-b50d-e40e989d00a8" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/example/libra/main.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/example/logrus/main.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/example/zap/main.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libra.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libra.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/config.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/context.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/debug.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/config.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/config/config.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/example" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/login.gtpl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/main.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/public/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/public/test.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/route/route.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/views/form_input.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/views/form_validate.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/views/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/views/post.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/libra.go" beforeDir="false" afterPath="$PROJECT_DIR$/libra.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logger.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/router.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/session.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/util.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/util_test.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/libra/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/example/libra/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

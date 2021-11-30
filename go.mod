@@ -1,4 +1,4 @@
-module libra
+module github.com/Hanggi/libra
 
 go 1.17
 
