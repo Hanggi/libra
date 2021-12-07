@@ -5,10 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7e633e7e-a6dc-4ae5-b50d-e40e989d00a8" name="Default" comment="">
+      <change afterPath="$PROJECT_DIR$/logger.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/example/libra/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/example/libra/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/logrus/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/example/logrus/main.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/libra.go" beforeDir="false" afterPath="$PROJECT_DIR$/libra.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

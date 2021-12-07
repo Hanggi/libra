@@ -20,7 +20,7 @@ func init() {
 }
 
 func main() {
-	log.New()
+	log.Info("hi")
 	log.WithFields(log.Fields{
 		"omg":    true,
 		"number": 122,
