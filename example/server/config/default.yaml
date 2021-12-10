@@ -1,0 +1,9 @@
+
+
+app:
+  templatePath: views/*
+  port: 8888
+  trustedProxies:
+    - 0.0.0.0
+  ginMode: debug
+  colorLog: true
